@@ -11,7 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/mydatabase');
+mongoose.connect('mongodb://localhost:27017/SrijanDawn');
 
 // Define a schema and model
 const UserSchema = new mongoose.Schema({
