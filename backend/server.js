@@ -19,13 +19,14 @@ const UserSchema = new mongoose.Schema({
     employeeID: String,
     email: String,
     phone: Number,
+    gender: String,
     designation: String,
     salary: Number,
     leaves: { type: Number, default: 0 },
     monthlySalary: { type: Number, default: 0 },
     taxDeductions: { type: Number, default: 0 },
-    numberOfLeaves: { type: Number, default: 0 },
     bonus: { type: Number, default: 0 },
+    numberOfLeaves: { type: Number, default: 0 },
     salaryPerDay: { type: Number, default: 0 },
     netAmount: { type: Number, default: 0 },
 });
@@ -34,8 +35,8 @@ const User = mongoose.model('User', UserSchema);
 
 // POST endpoint to save user data
 app.post('/api/users', async (req, res) => {
-    const { name, employeeID, email, phone, designation, salary } = req.body;
-    const newUser = new User({ name, employeeID, email, phone, designation, salary });
+    const { name, employeeID, email, phone, gender, designation, monthlySalary } = req.body;
+    const newUser = new User({ name, employeeID, email, phone, gender, designation, monthlySalary });
     await newUser.save();
     res.status(201).json(newUser);
 });
@@ -54,9 +55,8 @@ app.get('/api/users', async (req, res) => {
 app.put('/api/users/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, employeeID, email, phone, designation, salary } = req.body;
-        const updatedUser = await User.findByIdAndUpdate(id, { name, employeeID, email, phone, designation, salary }, { new: true });
-        
+        const { name, employeeID, email, phone, gender, designation, monthlySalary } = req.body;
+        const updatedUser = await User.findByIdAndUpdate(id, { name, employeeID, email, phone, gender, designation, monthlySalary }, { new: true });
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -64,6 +64,18 @@ app.put('/api/users/:id', async (req, res) => {
         res.status(200).json(updatedUser);
     } catch (error) {
         res.status(500).json({ message: 'Error updating user', error });
+    }
+});
+
+// Add this DELETE endpoint to delete user details from MongoDB.
+app.delete('/api/users/:id', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        await User.findByIdAndDelete(userId);
+        res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ error: 'Failed to delete user' });
     }
 });
 
@@ -104,18 +116,18 @@ app.put('/api/users/:id/reset-leaves', async (req, res) => {
 // Add a POST route to store financial data
 app.post('/api/users/:id/financial-details', async (req, res) => {
     try {
-        const { monthlySalary, taxDeductions, numberOfLeaves, bonus } = req.body;
+        const { monthlySalary, taxDeductions, bonus, numberOfLeaves } = req.body;
         const { id } = req.params;
 
         // Calculate salary per day and net amount
-        const salaryPerDay = monthlySalary / 30;  // Assume 30 days in a month
-        const netAmount = monthlySalary - taxDeductions - (salaryPerDay * numberOfLeaves) + bonus;
+        const salaryPerDay = + (monthlySalary / 30).toFixed(2);
+        const netAmount = (monthlySalary - parseInt(taxDeductions) + parseInt(bonus)) - (numberOfLeaves * salaryPerDay);
 
         const updatedUser = await User.findByIdAndUpdate(id, {
             monthlySalary,
             taxDeductions,
-            numberOfLeaves,
             bonus,
+            numberOfLeaves,
             salaryPerDay,
             netAmount,
         }, { new: true });
@@ -143,8 +155,8 @@ app.get('/api/users/:id/financial-details', async (req, res) => {
         res.status(200).json({
             monthlySalary: user.monthlySalary,
             taxDeductions: user.taxDeductions,
-            numberOfLeaves: user.numberOfLeaves,
             bonus: user.bonus,
+            numberOfLeaves: user.numberOfLeaves,
             salaryPerDay: user.salaryPerDay,
             netAmount: user.netAmount,
         });
