@@ -50,8 +50,3 @@ export default function Home() {
 		</div>
 	);
 }
-
-// address, gender.
-// yellow bg, blue bg in table, table border blue.
-// leave alert, delete employee.
-// employee ID in leave page
