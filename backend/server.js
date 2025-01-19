@@ -11,7 +11,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/mydatabase');
+require('dotenv').config();
+mongoose.connect(`${process.env.MONGODB_URI}`);
 
 // Define a schema and model
 const UserSchema = new mongoose.Schema({
