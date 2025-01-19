@@ -12,7 +12,7 @@ const UsersList = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/users');
+                const response = await fetch('https://payroll-backend-gamma.vercel.app/api/users');
                 const data = await response.json();
                 setUsers(data);
             } catch (error) {
@@ -38,7 +38,7 @@ const UsersList = () => {
     // Handle form submission for saving edits
     const handleEditSubmit = async (e) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/users/${editingUserId}`, {
+            const response = await fetch(`https://payroll-backend-gamma.vercel.app/api/users/${editingUserId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ const UsersList = () => {
     // Handle delete button click
     const handleDeleteClick = async (userId) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+            const response = await fetch(`https://payroll-backend-gamma.vercel.app/api/users/${userId}`, {
                 method: 'DELETE',
             });
 
