@@ -170,5 +170,5 @@ app.get('/api/users/:id/financial-details', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on https://payroll-j13d.onrender.com/api/users`);
 });
